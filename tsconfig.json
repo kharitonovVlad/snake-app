@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "target": "ES6",
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "dist"
   }
 }
