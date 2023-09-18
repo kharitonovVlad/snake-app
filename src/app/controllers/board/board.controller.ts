@@ -20,7 +20,6 @@ export class Board implements IBoard, IRenderer {
   constructor(private readonly _size: BoardSizeEnum) {
     this.createBoardCells();
     this.snake = new Snake(this);
-    this.setNotAvaliableCells();
   }
 
   public render(elementToDraw: Element): void {
@@ -36,14 +35,6 @@ export class Board implements IBoard, IRenderer {
         count--;
       }
     }
-  }
-
-  private setNotAvaliableCells(): void {
-    this.cells = this.cells.map((cell) => {
-      // TODO: Добавить логику подсчета индексов не доступных ячеек
-
-      return cell;
-    });
   }
 
   private createBoardCells(): void {
