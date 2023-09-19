@@ -9,7 +9,7 @@ import { EatsCountEnum } from './enums/eats-count.enum';
 const app = document.querySelector('#app');
 
 if (app && app instanceof HTMLDivElement) {
-  const board = new Board(BoardSizeEnum.Middle);
+  const board = new Board(BoardSizeEnum.Small);
   board.generateEats(EatsCountEnum.Three);
   board.render(app);
 }

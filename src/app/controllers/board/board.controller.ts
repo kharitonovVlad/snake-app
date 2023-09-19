@@ -30,7 +30,11 @@ export class Board implements IBoard, IRenderer {
     while (count) {
       const indexToGenerateEat = getRandomInt(0, this.cells.length);
 
-      if (!this.cells[indexToGenerateEat].isEat) {
+      if (
+        !this.cells[indexToGenerateEat].isEat &&
+        this.cells[indexToGenerateEat].isAvailable &&
+        !this.cells[indexToGenerateEat].isSnakeHead
+      ) {
         this.cells[indexToGenerateEat].isEat = true;
         count--;
       }
