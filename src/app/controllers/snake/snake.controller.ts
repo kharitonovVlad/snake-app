@@ -1,3 +1,5 @@
+import { ArrowKeyCodes } from '../../enums/arrow-key-codes.enum';
+import { DirectionEnum } from '../../enums/direction.enum';
 import { IBoard } from '../../interfaces/board.interface';
 import { ISnake } from '../../interfaces/snake.interface';
 import { PositionLocationAssumptions } from '../../types/position-location-assumptions.type';
@@ -10,13 +12,22 @@ export class Snake implements ISnake {
   private headPositionIndex: number = 0;
   private tailPositionsIndexes: number[] = [];
 
+  private direction: DirectionEnum;
+  private directionQueue: DirectionEnum[] = [];
+
   constructor(private board: IBoard) {
-    this.iniAndSetOnBoard();
+    this.setOnBoard(this.getInitialPosition());
     this.setNotAvaliableCells();
+    this.direction = DirectionEnum.Up;
+    this.startMove();
+    this.startListenMoveControlls();
   }
 
-  private iniAndSetOnBoard(): void {
-    this.headPositionIndex = this.getInitialPosition();
+  private setOnBoard(position: number): void {
+    this.headPositionIndex = position;
+    this.board.cells.map((cell) => {
+      cell.isSnakeHead = false;
+    });
     this.board.cells[this.headPositionIndex].isSnakeHead = true;
   }
 
@@ -43,6 +54,111 @@ export class Snake implements ISnake {
       cell.isAvailable = !listOfUnavailableIndexes.includes(index);
       return cell;
     });
+  }
+
+  private startMove(): void {
+    setInterval(this.moveNextDirection.bind(this), 500);
+  }
+
+  private moveNextDirection(): void {
+    const nextQueueDirection = this.directionQueue.length
+      ? this.directionQueue.shift()
+      : this.direction;
+    switch (nextQueueDirection) {
+      case DirectionEnum.Up: {
+        if (this.direction !== DirectionEnum.Down) {
+          this.direction = nextQueueDirection;
+          this.moveUp();
+        }
+        break;
+      }
+      case DirectionEnum.Right: {
+        if (this.direction !== DirectionEnum.Left) {
+          this.moveRight();
+          this.direction = nextQueueDirection;
+        }
+        break;
+      }
+      case DirectionEnum.Down: {
+        if (this.direction !== DirectionEnum.Up) {
+          this.moveDown();
+          this.direction = nextQueueDirection;
+        }
+        break;
+      }
+      case DirectionEnum.Left: {
+        if (this.direction !== DirectionEnum.Right) {
+          this.moveLeft();
+          this.direction = nextQueueDirection;
+        }
+        break;
+      }
+    }
+  }
+
+  private startListenMoveControlls(): void {
+    addEventListener('keyup', (event) => {
+      if (this.directionQueue.length < 2) {
+        switch (event.code) {
+          case ArrowKeyCodes.ArrowUp: {
+            this.directionQueue.push(DirectionEnum.Up);
+            break;
+          }
+          case ArrowKeyCodes.ArrowRight: {
+            this.directionQueue.push(DirectionEnum.Right);
+            break;
+          }
+          case ArrowKeyCodes.ArrowDown: {
+            this.directionQueue.push(DirectionEnum.Down);
+            break;
+          }
+          case ArrowKeyCodes.ArrowLeft: {
+            this.directionQueue.push(DirectionEnum.Left);
+            break;
+          }
+        }
+      }
+    });
+  }
+
+  private moveUp(): void {
+    const canMove = !PositionLocationHelper.isOnTopLine(
+      this.headPositionIndex,
+      this.board.size,
+    );
+    if (canMove) {
+      this.setOnBoard(this.headPositionIndex - this.board.size);
+    }
+  }
+
+  private moveRight(): void {
+    const canMove = !PositionLocationHelper.isOnRightLine(
+      this.headPositionIndex,
+      this.board.size,
+    );
+    if (canMove) {
+      this.setOnBoard(this.headPositionIndex + 1);
+    }
+  }
+
+  private moveDown(): void {
+    const canMove = !PositionLocationHelper.isOnBottomLine(
+      this.headPositionIndex,
+      this.board.size,
+    );
+    if (canMove) {
+      this.setOnBoard(this.headPositionIndex + this.board.size);
+    }
+  }
+
+  private moveLeft(): void {
+    const canMove = !PositionLocationHelper.isOnLeftLine(
+      this.headPositionIndex,
+      this.board.size,
+    );
+    if (canMove) {
+      this.setOnBoard(this.headPositionIndex - 1);
+    }
   }
 
   private getPositionLocationAssumptions(

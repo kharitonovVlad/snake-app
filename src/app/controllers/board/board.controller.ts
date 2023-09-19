@@ -23,6 +23,7 @@ export class Board implements IBoard, IRenderer {
   }
 
   public render(elementToDraw: Element): void {
+    elementToDraw.innerHTML = '';
     elementToDraw.insertAdjacentHTML('beforeend', getBoardView.call(this));
   }
 

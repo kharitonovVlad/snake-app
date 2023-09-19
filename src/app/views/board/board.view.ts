@@ -10,7 +10,7 @@ export function getBoardView(this: IBoard): string {
         this.cells[index].isEat ? `<div class="eat"></div>` : ``
       }${
         this.cells[index].isSnakeHead ? `<div class="snake-head"></div>` : ``
-      }${!this.cells[index].isAvailable ? index : ``}</div>`;
+      }</div>`;
       index++;
     }
     view += `</div>`;

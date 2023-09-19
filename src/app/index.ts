@@ -11,5 +11,7 @@ const app = document.querySelector('#app');
 if (app && app instanceof HTMLDivElement) {
   const board = new Board(BoardSizeEnum.Small);
   board.generateEats(EatsCountEnum.Three);
-  board.render(app);
+  setInterval(() => {
+    board.render(app);
+  }, 100);
 }
