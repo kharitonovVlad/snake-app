@@ -25,8 +25,13 @@ export class Snake implements ISnake {
 
   private setOnBoard(position: number): void {
     this.headPositionIndex = position;
-    this.board.cells.map((cell) => {
+    this.board.cells.map((cell, index) => {
       cell.isSnakeHead = false;
+      if (position === index && cell.isEat) {
+        this.tailPositionsIndexes.push(this.getNextTailPositionIndex());
+        cell.isEat = false;
+        this.board.generateEats();
+      }
     });
     this.board.cells[this.headPositionIndex].isSnakeHead = true;
   }
@@ -37,6 +42,23 @@ export class Snake implements ISnake {
       this.board.cells.length / this.board.size / 2 -
       1
     );
+  }
+
+  private getNextTailPositionIndex(): number {
+    switch (this.direction) {
+      case DirectionEnum.Up: {
+        return this.headPositionIndex + this.board.size;
+      }
+      case DirectionEnum.Right: {
+        return this.headPositionIndex - 1;
+      }
+      case DirectionEnum.Down: {
+        return this.headPositionIndex - this.board.size;
+      }
+      case DirectionEnum.Left: {
+        return this.headPositionIndex + 1;
+      }
+    }
   }
 
   private setNotAvaliableCells(): void {
@@ -64,6 +86,7 @@ export class Snake implements ISnake {
     const nextQueueDirection = this.directionQueue.length
       ? this.directionQueue.shift()
       : this.direction;
+
     switch (nextQueueDirection) {
       case DirectionEnum.Up: {
         if (this.direction !== DirectionEnum.Down) {
@@ -126,6 +149,7 @@ export class Snake implements ISnake {
       this.headPositionIndex,
       this.board.size,
     );
+
     if (canMove) {
       this.setOnBoard(this.headPositionIndex - this.board.size);
     }
@@ -136,6 +160,7 @@ export class Snake implements ISnake {
       this.headPositionIndex,
       this.board.size,
     );
+
     if (canMove) {
       this.setOnBoard(this.headPositionIndex + 1);
     }
@@ -146,6 +171,7 @@ export class Snake implements ISnake {
       this.headPositionIndex,
       this.board.size,
     );
+
     if (canMove) {
       this.setOnBoard(this.headPositionIndex + this.board.size);
     }
@@ -156,6 +182,7 @@ export class Snake implements ISnake {
       this.headPositionIndex,
       this.board.size,
     );
+
     if (canMove) {
       this.setOnBoard(this.headPositionIndex - 1);
     }

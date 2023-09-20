@@ -17,7 +17,10 @@ export class Board implements IBoard, IRenderer {
 
   private snake: ISnake;
 
-  constructor(private readonly _size: BoardSizeEnum) {
+  constructor(
+    private readonly _size: BoardSizeEnum,
+    private _eatCount: EatsCountEnum,
+  ) {
     this.createBoardCells();
     this.snake = new Snake(this);
   }
@@ -27,7 +30,12 @@ export class Board implements IBoard, IRenderer {
     elementToDraw.insertAdjacentHTML('beforeend', getBoardView.call(this));
   }
 
-  public generateEats(count: EatsCountEnum): void {
+  public generateEats(): void {
+    const existEatOnBoard = this.cells.filter((cell) => {
+      return cell.isEat;
+    });
+    let count = this._eatCount - existEatOnBoard.length;
+
     while (count) {
       const indexToGenerateEat = getRandomInt(0, this.cells.length);
 

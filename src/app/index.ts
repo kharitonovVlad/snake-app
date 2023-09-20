@@ -9,9 +9,9 @@ import { EatsCountEnum } from './enums/eats-count.enum';
 const app = document.querySelector('#app');
 
 if (app && app instanceof HTMLDivElement) {
-  const board = new Board(BoardSizeEnum.Small);
-  board.generateEats(EatsCountEnum.Three);
+  const board = new Board(BoardSizeEnum.Small, EatsCountEnum.Three);
+  board.generateEats();
   setInterval(() => {
     board.render(app);
-  }, 100);
+  }, 42);
 }
