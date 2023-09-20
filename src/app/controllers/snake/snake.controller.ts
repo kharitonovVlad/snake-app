@@ -27,13 +27,18 @@ export class Snake implements ISnake {
     this.headPositionIndex = position;
     this.board.cells.map((cell, index) => {
       cell.isSnakeHead = false;
+      cell.isSnake = false;
       if (position === index && cell.isEat) {
-        this.tailPositionsIndexes.push(this.getNextTailPositionIndex());
+        const nextTailPositionUndex = this.getNextTailPositionIndex();
+        this.tailPositionsIndexes.push(nextTailPositionUndex);
         cell.isEat = false;
         this.board.generateEats();
       }
     });
     this.board.cells[this.headPositionIndex].isSnakeHead = true;
+    this.tailPositionsIndexes.forEach((pos) => {
+      this.board.cells[pos].isSnake = true;
+    });
   }
 
   private getInitialPosition(): number {
@@ -151,6 +156,7 @@ export class Snake implements ISnake {
     );
 
     if (canMove) {
+      this.recalculateTailPositionIndexes();
       this.setOnBoard(this.headPositionIndex - this.board.size);
     }
   }
@@ -162,6 +168,7 @@ export class Snake implements ISnake {
     );
 
     if (canMove) {
+      this.recalculateTailPositionIndexes();
       this.setOnBoard(this.headPositionIndex + 1);
     }
   }
@@ -173,6 +180,7 @@ export class Snake implements ISnake {
     );
 
     if (canMove) {
+      this.recalculateTailPositionIndexes();
       this.setOnBoard(this.headPositionIndex + this.board.size);
     }
   }
@@ -184,7 +192,37 @@ export class Snake implements ISnake {
     );
 
     if (canMove) {
+      this.recalculateTailPositionIndexes();
       this.setOnBoard(this.headPositionIndex - 1);
+    }
+  }
+
+  private recalculateTailPositionIndexes(): void {
+    switch (this.direction) {
+      case DirectionEnum.Up: {
+        this.tailPositionsIndexes = this.tailPositionsIndexes.map((pos) => {
+          return pos - this.board.size;
+        });
+        break;
+      }
+      case DirectionEnum.Right: {
+        this.tailPositionsIndexes = this.tailPositionsIndexes.map((pos) => {
+          return pos + 1;
+        });
+        break;
+      }
+      case DirectionEnum.Down: {
+        this.tailPositionsIndexes = this.tailPositionsIndexes.map((pos) => {
+          return pos + this.board.size;
+        });
+        break;
+      }
+      case DirectionEnum.Left: {
+        this.tailPositionsIndexes = this.tailPositionsIndexes.map((pos) => {
+          return pos - 1;
+        });
+        break;
+      }
     }
   }
 
